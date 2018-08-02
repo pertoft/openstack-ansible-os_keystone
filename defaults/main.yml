@@ -450,6 +450,14 @@ keystone_role_project_group: keystone_all
 #                  template engine and copied to the target host.
 # keystone_sso_callback_file_path: "/etc/openstack_deploy/keystone/sso_callback_template.html"
 
+#: Tunable file-based overrides
+# The contents of these files, if they exist, are read from the
+# specified path on the deployment host, interpreted by the
+# template engine and copied to the target host. If they do
+# not exist then they will be generated on first playbook run.
+shibboleth_cert_user_file_path: "/etc/openstack_deploy/keystone/sp-cert.pem"
+shibboleth_key_user_file_path: "/etc/openstack_deploy/keystone/sp-key.pem"
+
 #: Tunable var-based overrides
 # The contents of these are templated over the default files.
 keystone_keystone_conf_overrides: {}

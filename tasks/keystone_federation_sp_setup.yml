@@ -26,11 +26,26 @@
   notify:
     - Restart Shibd
 
+- name: Copy Shibboleth SP key-pair (if provided)
+  copy:
+    content: "{{ item.content }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode|default('0640') }}"
+  when:
+    - inventory_hostname == groups['keystone_all'][0]
+    - item.content != ''
+  with_items:
+    - { content: "{{ shibboleth_cert_user_content }}", dest: "/etc/shibboleth/sp-cert.pem" }
+    - { content: "{{ shibboleth_key_user_content }}", dest: "/etc/shibboleth/sp-key.pem" }
+  notify:
+    - Manage LB
+    - Restart web server
+    - Restart Shibd
+
 - name: Generate the Shibboleth SP key-pair
   command: "shib-keygen -h {{ external_lb_vip_address }} -y {{ keystone_sp.cert_duration_years }}"
   args:
     creates: "/etc/shibboleth/sp-cert.pem"
-  changed_when: false
   when: inventory_hostname == groups['keystone_all'][0]
   notify:
     - Manage LB
