@@ -458,22 +458,10 @@ keystone_optional_oslomsg_amqp1_pip_packages:
 # by the py_pkgs lookup.
 keystone_role_project_group: keystone_all
 
-#: Tunable file-based overrides
-# The contents of these files, if they exist, are read from the
-# specified path on the deployment host, interpreted by the
-# template engine and copied to the target host. If they do
-# not exist then the default files will be sourced from the
-# service git repository.
-keystone_policy_default_file_path: "/etc/openstack_deploy/keystone/policy.json"
-keystone_sso_callback_file_path: "/etc/openstack_deploy/keystone/sso_callback_template.html"
-
-# If the above-mentioned files do not exist, then the defaults
-# inside the venvs will be used, but cached at this location
-# on the deployment host. Using the cache makes the re-use
-# of the files faster when deploying, but is also required in
-# order to still be able to apply the config_template override.
-keystone_config_cache_path: "{{ lookup('env', 'HOME') | default('/opt', true) }}/cache/keystone"
-keystone_config_cache_path_owner: "{{ lookup('env', 'USER') | default('root', true) }}"
+# NOTE(cloudnull): Tunable SSO callback file file-based overrides If defined,
+#                  it'll be read from the deployment host, interpreted by the
+#                  template engine and copied to the target host.
+# keystone_sso_callback_file_path: "/etc/openstack_deploy/keystone/sso_callback_template.html"
 
 #: Tunable var-based overrides
 # The contents of these are templated over the default files.
