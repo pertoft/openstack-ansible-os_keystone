@@ -13,19 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-- name: Create Keystone LDAP domains
-  keystone:
-    command: ensure_domain
-    domain_name: "{{ item.key }}"
-    login_user: "{{ keystone_admin_user_name }}"
-    login_password: "{{ keystone_auth_admin_password }}"
-    login_project_name: "{{ keystone_admin_tenant_name }}"
-    endpoint: "{{ keystone_service_adminurl }}"
-    insecure: "{{ keystone_service_adminuri_insecure }}"
+- name: Add LDAP domains
+  os_keystone_domain:
+    cloud: default
+    state: present
+    name: "{{ item.key }}"
+    endpoint_type: admin
+    verify: "{{ not keystone_service_adminuri_insecure }}"
+  register: add_ldap_domain
+  until: add_ldap_domain is success
+  retries: 5
+  delay: 10
   with_dict: "{{ keystone_ldap }}"
-  no_log: true
-  run_once: true
+  delegate_to: "{{ keystone_service_setup_host }}"
+  vars:
+    ansible_python_interpreter: >-
+      {{ (keystone_service_setup_host == 'localhost') | ternary(ansible_playbook_python, ansible_python['executable']) }}
 
 - name: Create Keystone LDAP domain configs
   template:
