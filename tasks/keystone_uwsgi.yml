@@ -61,3 +61,12 @@
   tags:
     - keystone-config
     - systemd-service
+
+# This is to cater for Q-R, R-S upgrades and can be removed in T
+- name: Stop and disable keystone-wsgi-admin
+  file:
+    path: /etc/systemd/system/keystone-wsgi-admin.service
+    state: absent
+  notify:
+    - Manage LB
+    - Restart web server

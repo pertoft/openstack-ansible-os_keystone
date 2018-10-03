@@ -27,6 +27,16 @@
     - Manage LB
     - Restart web server
 
+# TODO(cloudnull):
+# This is to cater for Q-R, R-S upgrades and can be removed in T
+- name: Remove legacy nginx config
+  file:
+    path: /etc/nginx/sites-enabled/keystone-wsgi-admin.conf
+    state: absent
+  notify:
+    - Manage LB
+    - Restart web server
+
 - name: Ensure configuration directories exist
   file:
     path: "{{ item }}"
@@ -34,17 +44,6 @@
   with_items:
     - "/etc/nginx/{{ keystone_nginx_conf_path }}"
     - "/etc/nginx/conf.d"
-
-# TODO(odyssey4me):
-# This is to cater for P->Q, Q-R upgrades and can be removed in S
-- name: Remove previously implemented custom nginx log format
-  lineinfile:
-    dest: "/etc/nginx/nginx.conf"
-    line: "log_format custom '{{ keystone_nginx_access_log_format_combined }} {{ keystone_nginx_access_log_format_extras }}';"
-    state: absent
-  notify:
-    - Manage LB
-    - Restart web server
 
 - name: Configure custom nginx log format
   copy:
