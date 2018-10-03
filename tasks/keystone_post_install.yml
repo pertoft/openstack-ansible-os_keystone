@@ -13,7 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Enable SSHD
+# If SSH is not running on all nodes immediately, then
+# the key rotation script will not be able to copy the
+# keys to the other nodes when they rotate.
+- name: Enable SSHD on all keystone hosts
   systemd:
     name: "{{ keystone_sshd }}"
     state: started
@@ -22,6 +25,7 @@
     daemon_reload: yes
   delegate_to: "{{ item }}"
   with_items: "{{ ansible_play_hosts }}"
+  when: "inventory_hostname == ansible_play_hosts[0]"
 
 - name: Generate the keystone system user ssh key
   user:
