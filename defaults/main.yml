@@ -487,3 +487,9 @@ keystone_uwsgi_init_overrides: {}
 #     - parameter: "Access-Control-Allow-Origin"
 #       value: "*"
 keystone_extra_headers: []
+
+# Toggle whether memcache should be flushed when doing
+# database migrations. This is sometimes useful when
+# doing upgrades, but should not usually be required.
+# ref: https://bugs.launchpad.net/openstack-ansible/+bug/1793389
+keystone_flush_memcache: no
