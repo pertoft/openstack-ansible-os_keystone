@@ -68,6 +68,7 @@
     - "ansible_local['openstack_ansible']['keystone']['need_db_expand'] | bool"
   run_once: yes
   register: _keystone_db_expand
+  notify: flush cache
 
 - name: Disable the requirement for db expand
   ini_file:
@@ -87,6 +88,7 @@
     - "ansible_local['openstack_ansible']['keystone']['need_db_migrate'] | bool"
   run_once: yes
   register: _keystone_db_migrate
+  notify: flush cache
 
 - name: Disable the requirement for db migrate
   ini_file:
@@ -107,6 +109,7 @@
     - "ansible_local['openstack_ansible']['keystone']['need_db_contract'] | bool"
   run_once: yes
   register: _keystone_db_contract
+  notify: flush cache
 
 - name: Disable the requirement for db contract
   ini_file:
