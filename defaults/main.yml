@@ -168,7 +168,6 @@ keystone_service_name: keystone
 keystone_service_port: 5000
 keystone_service_type: identity
 keystone_service_description: "Keystone Identity Service"
-keystone_service_user_name: keystone
 keystone_service_tenant_name: service
 
 keystone_service_proto: http
@@ -488,7 +487,6 @@ keystone_required_secrets:
   - keystone_oslomsg_rpc_password
   - keystone_oslomsg_notify_password
   - keystone_rabbitmq_password
-  - keystone_service_password
 
 keystone_uwsgi_init_overrides: {}
 

@@ -13,7 +13,6 @@
     keystone_developer_mode: true
     keystone_git_install_branch: master
     keystone_auth_admin_password: "SuperSecretePassword"
-    keystone_service_password: "secrete"
     keystone_oslomsg_rpc_password: "secrete"
     keystone_oslomsg_notify_password: "secrete"
     keystone_container_mysql_password: "SuperSecrete"

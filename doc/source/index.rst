@@ -44,7 +44,6 @@ To use this role, define the following variables:
     keystone_container_mysql_password: "YourPassword"
 
     keystone_auth_admin_password: "SuperSecretePassword"
-    keystone_service_password: "secrete"
     keystone_rabbitmq_password: "secrete"
     keystone_container_mysql_password: "SuperSecrete"
 
