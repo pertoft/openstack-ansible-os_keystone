@@ -18,6 +18,7 @@ keystone_distro_packages:
   - ca-certificates
   - cronie
   - git-core
+  - netcat-openbsd
   - openssh
   - rsync
 
