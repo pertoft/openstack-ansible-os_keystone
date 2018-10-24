@@ -39,7 +39,6 @@
   stat:
     path: "{{ item }}"
   with_items:
-    - "{{ keystone_paste_default_file_path }}"
     - "{{ keystone_policy_default_file_path }}"
     - "{{ keystone_sso_callback_file_path }}"
   register: _user_provided_config_files
@@ -55,14 +54,10 @@
 
 - name: Retrieve default configuration files from venv
   fetch:
-    src: "{{ _keystone_etc }}/keystone/{{ item }}"
+    src: "{{ _keystone_etc }}/keystone/{{ keystone_sso_callback_file_path | basename }}"
     dest: "{{ keystone_config_cache_path }}/"
     flat: yes
-  with_items:
-    - "{{ keystone_paste_default_file_path | basename }}"
-    - "{{ keystone_sso_callback_file_path | basename }}"
   run_once: yes
-  register: _venv_config_file_fetch
 
 - name: Copy keystone configuration files
   config_template:
@@ -81,19 +76,12 @@
       dest: "/etc/keystone/keystone.conf"
       config_overrides: "{{ keystone_keystone_conf_overrides }}"
       config_type: "ini"
-    - src: >-
-        {{ (_user_provided_config_files['results'][0]['stat']['exists'] | bool) |
-           ternary(keystone_paste_default_file_path,
-           keystone_config_cache_path ~ '/' ~ keystone_paste_default_file_path | basename) }}
-      dest: "/etc/keystone/keystone-paste.ini"
-      config_overrides: "{{ keystone_keystone_paste_ini_overrides }}"
-      config_type: "ini"
     - src: "{{ keystone_policy_default_file_path }}"
       dest: "/etc/keystone/policy.json-{{ keystone_venv_tag }}"
       config_overrides: "{{ keystone_policy_overrides }}"
       config_type: "json"
       condition: >-
-        {{ _user_provided_config_files['results'][1]['stat']['exists'] | bool }}
+        {{ _user_provided_config_files['results'][0]['stat']['exists'] | bool }}
   notify:
     - Manage LB
     - Restart uWSGI
@@ -102,7 +90,7 @@
 - name: Copy Keystone Federation SP SSO callback template
   copy:
     src: >-
-        {{ (_user_provided_config_files['results'][2]['stat']['exists'] | bool) |
+        {{ (_user_provided_config_files['results'][1]['stat']['exists'] | bool) |
            ternary(keystone_sso_callback_file_path,
            keystone_config_cache_path ~ '/' ~ keystone_sso_callback_file_path | basename) }}
     dest: "/etc/keystone/sso_callback_template.html"

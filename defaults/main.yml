@@ -462,7 +462,6 @@ keystone_role_project_group: keystone_all
 # template engine and copied to the target host. If they do
 # not exist then the default files will be sourced from the
 # service git repository.
-keystone_paste_default_file_path: "/etc/openstack_deploy/keystone/keystone-paste.ini"
 keystone_policy_default_file_path: "/etc/openstack_deploy/keystone/policy.json"
 keystone_sso_callback_file_path: "/etc/openstack_deploy/keystone/sso_callback_template.html"
 
@@ -478,7 +477,6 @@ keystone_config_cache_path_owner: "{{ lookup('env', 'USER') | default('root', tr
 # The contents of these are templated over the default files.
 keystone_keystone_conf_overrides: {}
 keystone_keystone_default_conf_overrides: {}
-keystone_keystone_paste_ini_overrides: {}
 keystone_policy_overrides: {}
 
 keystone_required_secrets:
