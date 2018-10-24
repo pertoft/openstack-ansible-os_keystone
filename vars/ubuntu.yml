@@ -20,6 +20,7 @@ keystone_distro_packages:
   - netcat
   - openssh-server
   - rsync
+  - cron
 
 keystone_devel_distro_packages:
   - docutils-common
