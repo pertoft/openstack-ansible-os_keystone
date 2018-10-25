@@ -511,3 +511,9 @@ keystone_extra_headers: []
 
 # List of trusted IPs which can pass X-Forwarded-For
 keystone_set_real_ip_from: []
+
+# Toggle whether memcache should be flushed when doing
+# database migrations. This is sometimes useful when
+# doing upgrades, but should not usually be required.
+# ref: https://bugs.launchpad.net/openstack-ansible/+bug/1793389
+keystone_flush_memcache: no
