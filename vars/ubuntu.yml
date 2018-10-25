@@ -19,6 +19,7 @@ keystone_distro_packages:
   - git
   - openssh-server
   - rsync
+  - cron
 
 keystone_devel_distro_packages:
   - docutils-common
