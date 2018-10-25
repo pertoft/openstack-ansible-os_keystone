@@ -18,7 +18,6 @@ keystone_distro_packages:
   - cronie
   - cronie-anacron
   - git
-  - nc
   - openssh-server
   - rsync
 

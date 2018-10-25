@@ -17,7 +17,6 @@ cache_timeout: 600
 
 keystone_distro_packages:
   - git
-  - netcat
   - openssh-server
   - rsync
 
