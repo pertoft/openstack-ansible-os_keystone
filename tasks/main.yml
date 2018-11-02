@@ -111,13 +111,6 @@
   tags:
     - keystone-config
 
-- include_tasks: keystone_token_cleanup.yml
-  when:
-    - "'uuid' in keystone_token_provider"
-  run_once: yes
-  tags:
-    - keystone-install
-
 - include_tasks: keystone_ssl.yml
   tags:
     - keystone-config
