@@ -20,6 +20,7 @@ keystone_distro_packages:
   - openssh-server
   - rsync
   - cron
+  - libpython2.7
 
 keystone_devel_distro_packages:
   - docutils-common
