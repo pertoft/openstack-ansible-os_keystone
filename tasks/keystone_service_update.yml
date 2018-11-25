@@ -41,7 +41,7 @@
         - url: "{{ keystone_service_internaluri }}"
           validate_certs: "{{ not keystone_service_internaluri_insecure }}"
       register: _wait_check
-      until: _wait_check | success
+      until: _wait_check is success
       retries: 12
       delay: 5
 
