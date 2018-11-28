@@ -25,7 +25,8 @@
     insecure: "{{ keystone_service_adminuri_insecure }}"
   with_dict: "{{ keystone_ldap }}"
   no_log: true
-  run_once: true
+  when:
+    - inventory_hostname == ((groups['keystone_all'] | intersect(ansible_play_hosts)) | list)[-1]
 
 - name: Create Keystone LDAP domain configs
   template:
