@@ -26,6 +26,8 @@
   delay: 10
   with_dict: "{{ keystone_ldap }}"
   delegate_to: "{{ keystone_service_setup_host }}"
+  when:
+    - "inventory_hostname == ((groups['keystone_all'] | intersect(ansible_play_hosts)) | list)[-1]"
   vars:
     ansible_python_interpreter: >-
       {{ (keystone_service_setup_host == 'localhost') | ternary(ansible_playbook_python, ansible_python['executable']) }}
