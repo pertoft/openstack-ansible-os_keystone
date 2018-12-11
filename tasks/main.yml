@@ -142,7 +142,6 @@
 
 - include_tasks: keystone_ldap_setup.yml
   when:
-    - "inventory_hostname == ((groups['keystone_all'] | intersect(ansible_play_hosts)) | list)[-1]"
     - "keystone_service_setup | bool"
   tags:
     - keystone-config
