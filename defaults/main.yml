@@ -276,7 +276,7 @@ keystone_cache_servers: []
 # See the http://docs.openstack.org/admin-guide/identity-integrate-with-ldap.html
 #
 # Each top-level entry is a domain name. Each entry below that are key: value pairs for
-# the ldap section in the domain-specific configuraiton file.
+# the ldap section in the domain-specific configuration file.
 #
 # (EXAMPLE LAYOUT)
 # keystone_ldap:
