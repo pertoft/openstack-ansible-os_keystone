@@ -114,6 +114,14 @@
     - _custom_policy_file['stat']['exists'] | bool
   listen: "Restart uWSGI"
 
+- name: Remove legacy policy.json file
+  file:
+    path: "/etc/keystone/policy.json"
+    state: absent
+  when:
+    - not _custom_policy_file['stat']['exists'] | bool
+  listen: "Restart uWSGI"
+
 - name: Start uWSGI
   service:
     name: "{{ item }}"
