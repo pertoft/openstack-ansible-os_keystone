@@ -27,10 +27,10 @@
     name: "{{ item[1] }}"
     state: "present"
     system: "yes"
+  delegate_to: "{{ item[0] }}"
   with_nested:
     - "{{ ansible_play_hosts }}"
     - "{{ keystone_system_additional_groups }}"
-  delegate_to: "{{ item[0] }}"
   when: "inventory_hostname == ansible_play_hosts[0]"
 
 - name: Remove old key file(s) if found
@@ -61,26 +61,68 @@
   with_items: "{{ ansible_play_hosts }}"
   when: "inventory_hostname == ansible_play_hosts[0]"
 
+# NOTE(cloudnull): During an upgrade the local directory may exist on a source
+#                  install. If the directory does exist it will need to be
+#                  removed. This is required on source installs because the
+#                  config directory is a link.
+- name: Source config block
+  block:
+    - name: Stat config directory
+      stat:
+        path: "/etc/keystone"
+      register: keystone_conf_dir_stat
+
+    - name: Remove the config directory
+      file:
+        path: "/etc/keystone"
+        state: absent
+      when:
+        - keystone_conf_dir_stat.stat.isdir is defined and
+          keystone_conf_dir_stat.stat.isdir
+  when:
+    - keystone_install_method == 'source'
+
 # The fernet key repository is needed on all hosts even if only running against
 # one host, so the delegation preps the directories on all hosts at once.
 - name: Create keystone dir
   file:
-    path: "{{ item[1].path }}"
-    state: directory
+    path: "{{ item[1].path | default(omit) }}"
+    src: "{{ item[1].src | default(omit) }}"
+    dest: "{{ item[1].dest | default(omit) }}"
+    state: "{{ item[1].state | default('directory') }}"
     owner: "{{ item[1].owner|default(keystone_system_user_name) }}"
     group: "{{ item[1].group|default(keystone_system_group_name) }}"
-    mode: "{{ item[1].mode|default(0755) }}"
+    mode: "{{ item[1].mode | default(omit) }}"
+    force: "{{ item[1].force | default(omit) }}"
   with_nested:
     - "{{ ansible_play_hosts }}"
-    - - { path: "/openstack", mode: "0755", owner: "root", group: "root" }
-      - { path: "/etc/keystone", mode: "0750" }
-      - { path: "{{ keystone_credential_key_repository }}", mode: "0750" }
-      - { path: "{{ keystone_ldap_domain_config_dir }}", mode: "0750" }
-      - { path: "/etc/keystone/ssl" }
-      - { path: "{{ keystone_fernet_tokens_key_repository }}", mode: "2750"}
-      - { path: "{{ keystone_system_user_home }}" }
-      - { path: "/var/www/cgi-bin", owner: root, group: root }
-      - { path: "/var/www/cgi-bin/keystone" }
-      - { path: "/etc/ansible/facts.d", owner: root, group: root }
+    - - path: "/openstack"
+        mode: "0755"
+        owner: "root"
+        group: "root"
+      - path: "{{ (keystone_install_method == 'distro') | ternary('/etc/keystone', (keystone_bin | dirname) + '/etc/keystone') }}"
+        mode: "0755"
+      # NOTE(cloudnull): The "src" path is relative. This ensures all files remain
+      #                  within the host/container confines when connecting to
+      #                  them using the connection plugin or the root filesystem.
+      - dest: "/etc/keystone"
+        src: "{{ keystone_bin | dirname | regex_replace('^/', '../') }}/etc/keystone"
+        state: "{{ (keystone_install_method == 'source') | ternary('link', 'directory') }}"
+        force: "{{ (keystone_install_method == 'source') | ternary(true, omit) }}"
+      - path: "{{ keystone_credential_key_repository }}"
+        mode: "0750"
+      - path: "{{ keystone_ldap_domain_config_dir }}"
+        mode: "0750"
+      - path: "/etc/keystone/ssl"
+      - path: "{{ keystone_fernet_tokens_key_repository }}"
+        mode: "2750"
+      - path: "{{ keystone_system_user_home }}"
+      - path: "/var/www/cgi-bin"
+        owner: root
+        group: root
+      - path: "/var/www/cgi-bin/keystone"
+      - path: "/etc/ansible/facts.d"
+        owner: root
+        group: root
   delegate_to: "{{ item[0] }}"
   when: "inventory_hostname == ansible_play_hosts[0]"

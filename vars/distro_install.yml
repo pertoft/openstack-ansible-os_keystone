@@ -38,4 +38,3 @@ keystone_package_list: |-
   {{ packages }}
 
 _keystone_bin: "/usr/bin"
-_keystone_etc: "/etc"

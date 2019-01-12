@@ -35,71 +35,74 @@
   with_items: "{{ ansible_play_hosts }}"
   when: "inventory_hostname == ansible_play_hosts[0]"
 
-- name: Check whether user-provided configuration files are provided
-  stat:
-    path: "{{ item }}"
-  with_items:
-    - "{{ keystone_policy_default_file_path }}"
-    - "{{ keystone_sso_callback_file_path }}"
-  register: _user_provided_config_files
-  delegate_to: localhost
-
-- name: Ensure that local config cache path exists on the deploy host
-  file:
-    path: "{{ keystone_config_cache_path }}"
-    state: directory
-    owner: "{{ keystone_config_cache_path_owner }}"
-  delegate_to: localhost
-  run_once: yes
-
-- name: Retrieve default configuration files from venv
-  fetch:
-    src: "{{ _keystone_etc }}/keystone/{{ keystone_sso_callback_file_path | basename }}"
-    dest: "{{ keystone_config_cache_path }}/"
-    flat: yes
-  run_once: yes
-
 - name: Copy keystone configuration files
   config_template:
-    content: "{{ item.content | default(omit) }}"
-    src: "{{ item.src | default(omit) }}"
-    dest: "{{ item.dest }}"
+    src: "keystone.conf.j2"
+    dest: "/etc/keystone/keystone.conf"
     owner: "root"
     group: "{{ keystone_system_group_name }}"
     mode: "0640"
-    config_overrides: "{{ item.config_overrides }}"
-    config_type: "{{ item.config_type }}"
-  when:
-    - item.condition | default(True)
-  with_items:
-    - src: "keystone.conf.j2"
-      dest: "/etc/keystone/keystone.conf"
-      config_overrides: "{{ keystone_keystone_conf_overrides }}"
-      config_type: "ini"
-    - src: "{{ keystone_policy_default_file_path }}"
-      dest: "/etc/keystone/policy.json-{{ keystone_venv_tag }}"
-      config_overrides: "{{ keystone_policy_overrides }}"
-      config_type: "json"
-      condition: >-
-        {{ _user_provided_config_files['results'][0]['stat']['exists'] | bool }}
+    config_overrides: "{{ keystone_keystone_conf_overrides }}"
+    config_type: "ini"
   notify:
     - Manage LB
     - Restart uWSGI
     - Restart web server
 
-- name: Copy Keystone Federation SP SSO callback template
+- name: Implement policy.json if there are overrides configured
   copy:
-    src: >-
-        {{ (_user_provided_config_files['results'][1]['stat']['exists'] | bool) |
-           ternary(keystone_sso_callback_file_path,
-           keystone_config_cache_path ~ '/' ~ keystone_sso_callback_file_path | basename) }}
-    dest: "/etc/keystone/sso_callback_template.html"
-    owner: "{{ keystone_system_user_name }}"
-    group: "{{ keystone_system_group_name }}"
-    mode: "0644"
+    content: "{{ keystone_policy_overrides | to_nice_json }}"
+    dest: "/etc/keystone/policy.json"
   when:
-    - keystone_sp != {}
+    - keystone_policy_overrides != {}
+
+# NOTE(cloudnull): This is using "cp" instead of copy with a remote_source
+#                  because we only want to copy the original files once. and we
+#                  don't want to need multiple tasks.
+- name: Preserve original configuration file(s)
+  command: "cp {{ item.target_f }} {{ item.target_f }}.original"
+  args:
+    creates: "{{ item.target_f }}.original"
+  with_items: "{{ keystone_core_files }}"
+
+- name: Fetch override files
+  fetch:
+    src: "{{ item.target_f }}"
+    dest: "{{ item.tmp_f }}"
+    flat: yes
+  changed_when: false
+  run_once: true
+  with_items: "{{ keystone_core_files }}"
+
+- name: Copy common config
+  config_template:
+    src: "{{ item.tmp_f }}"
+    dest: "{{ item.target_f }}"
+    owner: "root"
+    group: "{{ item.group | default(keystone_system_group_name) }}"
+    mode: "0640"
+    config_overrides: "{{ item.config_overrides }}"
+    config_type: "{{ item.config_type }}"
+  with_items: "{{ keystone_core_files }}"
   notify:
-    - Manage LB
+    - Restart uWSGI
+    - Restart web server
+
+- name: Cleanup fetched temp files
+  file:
+    path: "{{ item.tmp_f }}"
+    state: absent
+  changed_when: false
+  delegate_to: localhost
+  run_once: true
+  with_items: "{{ keystone_core_files }}"
+
+- name: Copy sso callback file
+  copy:
+    src: "{{ keystone_sso_callback_file_path }}"
+    dest: "/etc/keystone/sso_callback_template.html"
+  when:
+    - keystone_sso_callback_file_path is defined
+  notify:
     - Restart uWSGI
     - Restart web server
