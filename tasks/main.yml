@@ -142,7 +142,8 @@
 
 - include_tasks: keystone_ldap_setup.yml
   when:
-    - "keystone_service_setup | bool"
+    - keystone_service_setup | bool
+    - keystone_ldap != {}
   tags:
     - keystone-config
 
