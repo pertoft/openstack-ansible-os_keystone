@@ -23,7 +23,7 @@ transport_url = {{ keystone_oslomsg_rpc_transport }}://{% for host in keystone_o
 ssl = {{ keystone_oslomsg_rpc_use_ssl }}
 
 [oslo_messaging_notifications]
-driver = {% if keystone_ceilometer_enabled %}messagingv2{% else %}noop{% endif %}
+driver = {{ (keystone_ceilometer_enabled | bool) | ternary('messagingv2', 'noop') }}
 transport_url = {{ keystone_oslomsg_notify_transport }}://{% for host in keystone_oslomsg_notify_servers.split(',') %}{{ keystone_oslomsg_notify_userid }}:{{ keystone_oslomsg_notify_password }}@{{ host }}:{{ keystone_oslomsg_notify_port }}{% if not loop.last %},{% else %}/{{ keystone_oslomsg_notify_vhost }}{% if keystone_oslomsg_notify_use_ssl | bool %}?ssl=1{% else %}?ssl=0{% endif %}{% endif %}{% endfor %}
 
 {% if keystone_cache_servers | length > 0 %}
