@@ -448,6 +448,9 @@ keystone_pip_packages:
   - uWSGI
   - pyngus
 
+# Specific pip packages provided by the user
+keystone_user_pip_packages: []
+
 # optional pip packages
 keystone_optional_oslomsg_amqp1_pip_packages:
   - oslo.messaging[amqp1]
