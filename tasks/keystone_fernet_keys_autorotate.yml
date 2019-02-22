@@ -41,6 +41,7 @@
 - name: Remove extra auto rotation job
   cron:
     name: "Fernet auto rotate job"
+    user: "{{ keystone_system_user_name }}"
     cron_file: keystone-fernet-rotate
     state: "absent"
   when: >
