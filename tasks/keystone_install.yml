@@ -91,6 +91,9 @@
     name: "{{ (keystone_web_server == 'nginx') | ternary(keystone_apache_distro_packages, keystone_nginx_distro_packages) }}"
     state: absent
     autoremove: "{{ (ansible_pkg_mgr == 'apt') | ternary('yes', omit) }}"
+    newuse: "{{ (ansible_pkg_mgr == 'portage') | ternary('yes', omit) }}"
+    changed_use: "{{ (ansible_pkg_mgr == 'portage') | ternary('yes', omit) }}"
+    noreplace: "{{ (ansible_pkg_mgr == 'portage') | ternary('yes', omit) }}"
 
 - name: Install distro packages
   package:
@@ -98,6 +101,9 @@
     state: "{{ keystone_package_state }}"
     update_cache: "{{ (ansible_pkg_mgr in ['apt', 'zypper']) | ternary('yes', omit) }}"
     cache_valid_time: "{{ (ansible_pkg_mgr == 'apt') | ternary(cache_timeout, omit) }}"
+    newuse: "{{ (ansible_pkg_mgr == 'portage') | ternary('yes', omit) }}"
+    changed_use: "{{ (ansible_pkg_mgr == 'portage') | ternary('yes', omit) }}"
+    noreplace: "{{ (ansible_pkg_mgr == 'portage') | ternary('yes', omit) }}"
   register: install_packages
   until: install_packages is success
   retries: 5
