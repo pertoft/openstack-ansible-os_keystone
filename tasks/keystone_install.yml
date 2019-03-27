@@ -112,8 +112,31 @@
     - Manage LB
     - Restart web server
 
-- name: Install keystone packages from PIP
-  include_tasks: keystone_install_source.yml
+- name: Install the python venv
+  import_role:
+    name: "python_venv_build"
+  vars:
+    venv_build_constraints: "{{ keystone_git_constraints }}"
+    venv_build_distro_package_list: "{{ keystone_devel_distro_packages }}"
+    venv_install_destination_path: "{{ keystone_bin | dirname }}"
+    venv_pip_install_args: "{{ keystone_pip_install_args }}"
+    venv_pip_packages: >-
+      {{ keystone_pip_packages |
+           union(keystone_user_pip_packages) |
+             union(((keystone_oslomsg_amqp1_enabled | bool) | ternary(keystone_optional_oslomsg_amqp1_pip_packages, []))) }}
+    venv_facts_when_changed:
+      - section: "keystone"
+        option: "need_db_expand"
+        value: "True"
+      - section: "keystone"
+        option: "need_db_migrate"
+        value: "True"
+      - section: "keystone"
+        option: "need_db_contract"
+        value: "True"
+      - section: "keystone"
+        option: "venv_tag"
+        value: "{{ keystone_venv_tag }}"
   when: keystone_install_method == 'source'
 
 # TODO(hwoarang): We need to have a venv_tag local fact deployed since we use it in the
