@@ -28,6 +28,7 @@
 
 - name: Wait for web server to complete starting
   wait_for:
+    host: "{{ ansible_default_ipv4.address }}"
     port: "{{ item }}"
     timeout: 25
     delay: 10
