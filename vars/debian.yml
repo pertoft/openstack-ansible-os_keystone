@@ -30,6 +30,7 @@ keystone_devel_distro_packages:
   - libldap2-dev
   - libsasl2-dev
   - libsystemd-dev
+  - libssl-dev
   - libxslt1.1
   - libxslt1-dev
   - libxml2-dev
