@@ -28,7 +28,7 @@ transport_url = {{ keystone_oslomsg_notify_transport }}://{% for host in keyston
 
 {% if keystone_cache_servers | length > 0 %}
 [cache]
-backend = dogpile.cache.memcached
+backend = oslo_cache.memcache_pool
 # FIXME(lbragstad): Some strange behaviors have been reported when using
 # multiple memcached instances with backend_argument. This has been documented
 # in https://bugs.launchpad.net/oslo.cache/+bug/1743036
