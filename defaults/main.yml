@@ -468,6 +468,7 @@ keystone_uwsgi_init_overrides: {}
 ## Service Name-Group Mapping
 keystone_services:
   keystone-wsgi-public:
+    group: keystone_all
     service_name: "keystone-wsgi-public"
     init_config_overrides: "{{ keystone_uwsgi_init_overrides }}"
     execstarts: "{{ keystone_uwsgi_bin }}/uwsgi --autoload --ini /etc/uwsgi/keystone-wsgi-public.ini"
