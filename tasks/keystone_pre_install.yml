@@ -71,16 +71,22 @@
       stat:
         path: "/etc/keystone"
       register: keystone_conf_dir_stat
+      with_items:
+        - "{{ ansible_play_hosts }}"
 
     - name: Remove the config directory
       file:
         path: "/etc/keystone"
         state: absent
+      with_items:
+        - "{{ keystone_conf_dir_stat.results }}"
+      delegate_to: "{{ item.item }}"
       when:
-        - keystone_conf_dir_stat.stat.isdir is defined and
-          keystone_conf_dir_stat.stat.isdir
+       - item.stat.isdir is defined and
+         item.stat.isdir
   when:
     - keystone_install_method == 'source'
+    - "inventory_hostname == ansible_play_hosts[0]"
 
 # The fernet key repository is needed on all hosts even if only running against
 # one host, so the delegation preps the directories on all hosts at once.
