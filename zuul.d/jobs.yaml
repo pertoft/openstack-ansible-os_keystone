@@ -20,9 +20,9 @@
       tox_env: uw_apache
 
 - job:
-    name: openstack-ansible-uw_apache-ubuntu-xenial
+    name: openstack-ansible-uw_apache-ubuntu-bionic
     parent: openstack-ansible-uw_apache
-    nodeset: ubuntu-xenial
+    nodeset: ubuntu-bionic
 
 - job:
     name: openstack-ansible-uw_apache-centos-7

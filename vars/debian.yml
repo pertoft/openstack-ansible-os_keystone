@@ -87,7 +87,7 @@ keystone_apache_modules:
     state: "{{ (keystone_ssl | bool) | ternary('present', 'absent') }}"
   - name: "shib2"
     state: "{{ ( keystone_sp != {} ) | ternary('present', 'absent') }}"
-  - name: "proxy_http"
+  - name: "proxy_uwsgi"
     state: "present"
   - name: "headers"
     state: "present"
