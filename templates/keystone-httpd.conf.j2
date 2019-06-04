@@ -16,6 +16,9 @@ Listen {{ keystone_service_port }}
     Header set X-Content-Type-Options "nosniff"
     Header set X-XSS-Protection "1; mode=block"
     Header set Content-Security-Policy "default-src 'self' https: wss:;"
+    {% if keystone_sp != {} -%}
+    Header set Content-Security-Policy "script-src 'sha256-oBahlBFQem+nMs1JwgcBB03Hy8nRh5e8qEGTOcxmAuM=';"
+    {% endif %}
     Header set X-Frame-Options "{{ keystone_x_frame_options | default ('DENY') }}"
 
     {% if keystone_ssl | bool and keystone_service_internaluri_proto == "https" -%}
