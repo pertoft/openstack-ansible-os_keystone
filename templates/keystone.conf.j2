@@ -50,7 +50,6 @@ cache_time = {{ keystone_revocation_cache_time }}
 [auth]
 {% if keystone_sp != {} %}
 methods = {{ keystone_auth_methods }},saml2
-saml2 = keystone.auth.plugins.mapped.Mapped
 {% else %}
 methods = {{ keystone_auth_methods }}
 {% endif %}
