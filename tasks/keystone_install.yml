@@ -94,6 +94,8 @@
     newuse: "{{ (ansible_pkg_mgr == 'portage') | ternary('yes', omit) }}"
     changed_use: "{{ (ansible_pkg_mgr == 'portage') | ternary('yes', omit) }}"
     noreplace: "{{ (ansible_pkg_mgr == 'portage') | ternary('yes', omit) }}"
+  when: "(is_metal is undefined) or
+         not (is_metal | bool)"
 
 - name: Install distro packages
   package:
