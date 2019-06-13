@@ -48,11 +48,11 @@
   tags:
     - always
 
-- include_tasks: keystone_pre_install.yml
+- import_tasks: keystone_pre_install.yml
   tags:
     - keystone-install
 
-- include_tasks: keystone_install.yml
+- import_tasks: keystone_install.yml
   tags:
     - keystone-install
 
@@ -63,33 +63,33 @@
   tags:
     - keystone-config
 
-- include_tasks: keystone_post_install.yml
+- import_tasks: keystone_post_install.yml
   tags:
     - keystone-config
 
-- include_tasks: keystone_key_setup.yml
+- import_tasks: keystone_key_setup.yml
   tags:
     - keystone-config
 
-- include_tasks: keystone_fernet.yml
+- import_tasks: keystone_fernet.yml
   when:
     - "'fernet' in keystone_token_provider"
     - keystone_service_setup | bool
   tags:
     - keystone-config
 
-- include_tasks: keystone_db_setup.yml
+- import_tasks: keystone_db_setup.yml
   when:
     - "keystone_database_enabled | bool"
   tags:
     - keystone-config
 
-- include_tasks: keystone_credential.yml
+- import_tasks: keystone_credential.yml
   when: keystone_service_setup | bool
   tags:
     - keystone-config
 
-- include_tasks: keystone_federation_sp_setup.yml
+- import_tasks: keystone_federation_sp_setup.yml
   when: keystone_sp != {}
   tags:
     - keystone-config
@@ -111,43 +111,43 @@
     - common-mq
     - keystone-config
 
-- include_tasks: keystone_ssl.yml
+- import_tasks: keystone_ssl.yml
   tags:
     - keystone-config
 
-- include_tasks: "keystone_{{ keystone_web_server }}.yml"
+- import_tasks: "keystone_{{ keystone_web_server }}.yml"
   tags:
     - keystone-config
 
-- include_tasks: keystone_uwsgi.yml
+- import_tasks: keystone_uwsgi.yml
   tags:
     - keystone-config
 
 - name: Flush handlers
   meta: flush_handlers
 
-- include_tasks: keystone_service_bootstrap.yml
+- import_tasks: keystone_service_bootstrap.yml
   when:
     - "inventory_hostname == ((groups['keystone_all'] | intersect(ansible_play_hosts)) | list)[0]"
     - "keystone_service_setup | bool"
   tags:
     - keystone-config
 
-- include_tasks: keystone_service_update.yml
+- import_tasks: keystone_service_update.yml
   when:
     - "inventory_hostname == ((groups['keystone_all'] | intersect(ansible_play_hosts)) | list)[-1]"
     - "keystone_service_setup | bool"
   tags:
     - keystone-config
 
-- include_tasks: keystone_ldap_setup.yml
+- import_tasks: keystone_ldap_setup.yml
   when:
     - keystone_service_setup | bool
     - keystone_ldap != {}
   tags:
     - keystone-config
 
-- include_tasks: keystone_federation_sp_idp_setup.yml
+- import_tasks: keystone_federation_sp_idp_setup.yml
   when:
     - keystone_service_setup | bool
     - keystone_sp != {}
@@ -158,7 +158,7 @@
 - name: Flush handlers
   meta: flush_handlers
 
-- include_tasks: keystone_idp_setup.yml
+- import_tasks: keystone_idp_setup.yml
   when: keystone_idp != {}
   tags:
     - keystone-config
