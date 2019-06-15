@@ -445,7 +445,6 @@ keystone_role_project_group: keystone_all
 # not exist then the default files will be sourced from the
 # service git repository.
 keystone_paste_default_file_path: "/etc/openstack_deploy/keystone/keystone-paste.ini"
-keystone_policy_default_file_path: "/etc/openstack_deploy/keystone/policy.json"
 keystone_sso_callback_file_path: "/etc/openstack_deploy/keystone/sso_callback_template.html"
 
 # If the above-mentioned files do not exist, then the defaults
