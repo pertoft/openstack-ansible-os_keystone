@@ -61,10 +61,12 @@
   with_items: "{{ ansible_play_hosts }}"
   when: "inventory_hostname == ansible_play_hosts[0]"
 
-# NOTE(cloudnull): During an upgrade the local directory may exist on a source
-#                  install. If the directory does exist it will need to be
-#                  removed. This is required on source installs because the
-#                  config directory is a link.
+# NOTE(jrosser) this block is to undo symlinking of /etc/keystone into
+# the keystone venv introduced in change-id I93cb6463ca1eb93ab7f4e7a3970a7de829efaf66.
+# The smart-sources behaviour of deleting the /etc/keystone directory caused the total
+# loss of all fernet keys and credential keys during an R->S upgrade using the Stein
+# release candidate.
+# Remove this code in the Train release.
 - name: Source config block
   block:
     - name: Stat config directory
@@ -73,8 +75,10 @@
       register: keystone_conf_dir_stat
       with_items:
         - "{{ ansible_play_hosts }}"
+      delegate_to: "{{ item }}"
+      run_once: yes
 
-    - name: Remove the config directory
+    - name: Remove the config directory symlink, if it exists
       file:
         path: "/etc/keystone"
         state: absent
@@ -82,11 +86,12 @@
         - "{{ keystone_conf_dir_stat.results }}"
       delegate_to: "{{ item.item }}"
       when:
-       - item.stat.isdir is defined and
-         item.stat.isdir
+       - item.stat.islnk is defined and
+         item.stat.islnk
+      run_once: yes
+
   when:
     - keystone_install_method == 'source'
-    - "inventory_hostname == ansible_play_hosts[0]"
 
 # The fernet key repository is needed on all hosts even if only running against
 # one host, so the delegation preps the directories on all hosts at once.
@@ -106,15 +111,8 @@
         mode: "0755"
         owner: "root"
         group: "root"
-      - path: "{{ (keystone_install_method == 'distro') | ternary('/etc/keystone', (keystone_bin | dirname) + '/etc/keystone') }}"
-        mode: "0755"
-      # NOTE(cloudnull): The "src" path is relative. This ensures all files remain
-      #                  within the host/container confines when connecting to
-      #                  them using the connection plugin or the root filesystem.
       - dest: "/etc/keystone"
-        src: "{{ keystone_bin | dirname | regex_replace('^/', '../') }}/etc/keystone"
-        state: "{{ (keystone_install_method == 'source') | ternary('link', 'directory') }}"
-        force: "{{ (keystone_install_method == 'source') | ternary(true, omit) }}"
+        mode: "0755"
       - path: "{{ keystone_credential_key_repository }}"
         mode: "0750"
       - path: "{{ keystone_ldap_domain_config_dir }}"
@@ -132,3 +130,21 @@
         group: root
   delegate_to: "{{ item[0] }}"
   when: "inventory_hostname == ansible_play_hosts[0]"
+
+# NOTE (jrosser) This recovers Stein release candidate deployments into a
+# state where the fernet and credential keys will not be lost on subsequent upgrades.
+# Remove in Train release
+- name: Rescue fernet keys previously symlinked into the ansible venv
+  command: >
+    cp -rp {{ item.stat.lnk_target | regex_replace('^../', '/') }} /etc/keystone
+  with_items:
+    - "{{ keystone_conf_dir_stat.results }}"
+  delegate_to: "{{ item.item }}"
+  when:
+    - keystone_install_method == 'source'
+    - item.stat.islnk is defined and
+      item.stat.islnk
+  run_once: yes
+  tags:
+    - skip_ansible_lint
+
