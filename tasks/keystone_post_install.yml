@@ -40,7 +40,6 @@
     path: "{{ item }}"
   with_items:
     - "{{ keystone_paste_default_file_path }}"
-    - "{{ keystone_policy_default_file_path }}"
     - "{{ keystone_sso_callback_file_path }}"
   register: _user_provided_config_files
   delegate_to: localhost
@@ -88,16 +87,17 @@
       dest: "/etc/keystone/keystone-paste.ini"
       config_overrides: "{{ keystone_keystone_paste_ini_overrides }}"
       config_type: "ini"
-    - src: "{{ keystone_policy_default_file_path }}"
-      dest: "/etc/keystone/policy.json-{{ keystone_venv_tag }}"
-      config_overrides: "{{ keystone_policy_overrides }}"
-      config_type: "json"
-      condition: >-
-        {{ _user_provided_config_files['results'][1]['stat']['exists'] | bool }}
   notify:
     - Manage LB
     - Restart uWSGI
     - Restart web server
+
+- name: Implement policy.json if there are overrides configured
+  copy:
+    content: "{{ keystone_policy_overrides | to_nice_json }}"
+    dest: "/etc/keystone/policy.json-{{ keystone_venv_tag }}"
+  when:
+    - keystone_policy_overrides != {}
 
 - name: Copy Keystone Federation SP SSO callback template
   copy:
