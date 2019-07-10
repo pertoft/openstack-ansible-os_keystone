@@ -16,11 +16,10 @@
 
 keystone_distro_packages:
   - ca-certificates
-  - cronie
+  - cron
   - git-core
   - openssh
   - rsync
-  - libpython2_7-1_0
 
 keystone_devel_distro_packages:
   - cyrus-sasl-devel
@@ -31,7 +30,6 @@ keystone_devel_distro_packages:
   - systemd-devel
   - pkg-config
   - python-devel
-  - which
 
 keystone_service_distro_packages:
   - openstack-keystone
