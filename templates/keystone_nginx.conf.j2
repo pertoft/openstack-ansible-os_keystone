@@ -1,7 +1,7 @@
 # {{ ansible_managed }}
 server {
 
-    listen {{ keystone_nginx_ports[item] }};
+    listen {{ keystone_web_server_bind_address }}:{{ keystone_nginx_ports[item] }};
 
     {% if keystone_ssl | bool and keystone_service_adminuri_proto == "https" %}
     ssl                     on;

@@ -28,7 +28,7 @@
 
 - name: Wait for web server to complete starting
   wait_for:
-    host: "{{ ansible_default_ipv4.address | default('127.0.0.1') }}"
+    host: "{{ keystone_web_server_bind_address }}"
     port: "{{ item }}"
     timeout: 25
     delay: 10
