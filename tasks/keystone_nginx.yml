@@ -27,11 +27,9 @@
     - Manage LB
     - Restart web server
 
-# TODO(cloudnull):
-# This is to cater for Q-R, R-S upgrades and can be removed in T
-- name: Remove legacy nginx config
+- name: Remove default nginx config
   file:
-    path: /etc/nginx/sites-enabled/keystone-wsgi-admin.conf
+    path: /etc/nginx/conf.d/default.conf
     state: absent
   notify:
     - Manage LB
