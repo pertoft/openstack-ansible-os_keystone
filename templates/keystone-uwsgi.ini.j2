@@ -10,7 +10,7 @@ virtualenv = /openstack/venvs/keystone-{{ keystone_venv_tag }}
 plugin = python3
 {% endif %}
 wsgi-file = {{ keystone_bin }}/{{ item }}
-http = :{{ keystone_uwsgi_ports[item]['http'] }}
+http = {{ keystone_uwsgi_bind_address }}:{{ keystone_uwsgi_ports[item]['http'] }}
 socket = 127.0.0.1:{{ keystone_uwsgi_ports[item]['socket'] }}
 
 master = true
