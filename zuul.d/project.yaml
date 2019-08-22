@@ -24,11 +24,9 @@
         - openstack-ansible-uw_apache-ubuntu-xenial
         - openstack-ansible-functional-distro_install-ubuntu-xenial
         - openstack-ansible-functional-distro_install-centos-7
-        - openstack-ansible-functional-distro_install-opensuse-423
     gate:
       jobs:
         - openstack-ansible-uw_apache-centos-7
         - openstack-ansible-uw_apache-ubuntu-xenial
         - openstack-ansible-functional-distro_install-ubuntu-bionic
         - openstack-ansible-functional-distro_install-centos-7
-        - openstack-ansible-functional-distro_install-opensuse-423
