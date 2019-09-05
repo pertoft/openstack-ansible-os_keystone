@@ -29,6 +29,7 @@ keystone_pip_package_state: "latest"
 
 # Set installation method.
 keystone_install_method: "source"
+keystone_venv_python_executable: "{{ openstack_venv_python_executable | default('python2') }}"
 
 # Role standard API override this option in the OS variable files
 keystone_shibboleth_repo: {}
