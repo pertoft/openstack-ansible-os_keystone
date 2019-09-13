@@ -29,13 +29,12 @@ keystone_devel_distro_packages:
   - openldap2-devel
   - systemd-devel
   - pkg-config
-  - python-devel
+  - python3-devel
 
 keystone_service_distro_packages:
   - openstack-keystone
-  - python-systemd
   - uwsgi
-  - uwsgi-python
+  - uwsgi-python3
 
 keystone_apache_distro_packages:
   - apache2
