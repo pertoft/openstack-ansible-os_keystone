@@ -20,7 +20,7 @@
 # User with_subelements instead, but in v1.x it's broken
 - name: Set keystone_federated_identities fact
   keystone_sp:
-    sp_data: "{{ keystone_sp }}"
+    sp_data: "{{ keystone_sp | to_json }}"
 
 - name: Ensure domain which remote IDP users are mapped onto exists
   keystone:

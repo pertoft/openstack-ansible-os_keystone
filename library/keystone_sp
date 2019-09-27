@@ -82,7 +82,7 @@ class KeystoneSp(object):
         self.protocols_return_list = list()
         self.sp_data = self.module.params['sp_data']
         if isinstance(self.sp_data, str):
-            self.sp_data = json.loads(self.sp_data.replace("'", '"'))
+            self.sp_data = json.loads(self.sp_data)
 
     def populate_sp_data(self):
         trusted_idp_list = self.sp_data['trusted_idp_list']
