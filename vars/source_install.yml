@@ -38,3 +38,6 @@ keystone_package_list: |-
 
 _keystone_bin: "/openstack/venvs/keystone-{{ keystone_venv_tag }}/bin"
 keystone_uwsgi_bin: "{{ _keystone_bin }}"
+# These vars find a file on the deployment node, if it exists - otherwise the result is empty.
+shibboleth_cert_user_content: "{{ lookup('pipe', 'cat ' ~ shibboleth_cert_user_file_path ~ ' 2>/dev/null || true') }}"
+shibboleth_key_user_content: "{{ lookup('pipe', 'cat ' ~  shibboleth_key_user_file_path ~ ' 2>/dev/null || true') }}"
