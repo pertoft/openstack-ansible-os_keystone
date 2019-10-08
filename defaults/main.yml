@@ -91,7 +91,7 @@ keystone_assignment_driver: sql
 keystone_resource_cache_time: 3600
 keystone_resource_driver: sql
 
-keystone_bind_address: 0.0.0.0
+keystone_bind_address: "{{ openstack_service_bind_address | default('0.0.0.0') }}"
 
 ## Database info
 keystone_db_setup_host: "{{ ('galera_all' in groups) | ternary(groups['galera_all'][0], 'localhost') }}"
@@ -186,7 +186,7 @@ keystone_service_adminuri: "{{ keystone_service_adminuri_proto }}://{{ internal_
 # so that we do not have to be concerned with multiple web servers.
 #
 keystone_web_server: "{{ (keystone_sp != {}) | ternary('apache', 'nginx') }}"
-keystone_web_server_bind_address: 0.0.0.0
+keystone_web_server_bind_address: "{{ openstack_service_bind_address | default('0.0.0.0') }}"
 
 ## Apache setup
 keystone_apache_log_level: info
@@ -217,7 +217,7 @@ keystone_wsgi_threads: 1
 ## Cap the maximun number of processes when a user value is unspecified.
 keystone_wsgi_processes_max: 16
 keystone_wsgi_processes: "{{ [[ansible_processor_vcpus|default(1), 1] | max * 2, keystone_wsgi_processes_max] | min }}"
-keystone_uwsgi_bind_address: 0.0.0.0
+keystone_uwsgi_bind_address: "{{ openstack_service_bind_address | default('0.0.0.0') }}"
 
 keystone_uwsgi_ports:
   keystone-wsgi-public:
