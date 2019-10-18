@@ -22,6 +22,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+import openstackdocstheme
 import pbr.version
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -40,6 +41,8 @@ import pbr.version
 extensions = [
     'openstackdocstheme',
     'sphinx.ext.autodoc',
+    'sphinx.ext.extlinks',
+    'sphinxcontrib.rsvgconverter',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -64,12 +67,19 @@ description = 'OpenStack-Ansible deploys OpenStack environments using Ansible.'
 project = 'OpenStack-Ansible'
 role_name = 'os_keystone'
 target_name = 'openstack-ansible-' + role_name
-title = 'OpenStack-Ansible Documentation: ' + role_name + 'role'
+title = 'OpenStack-Ansible Documentation: ' + role_name + ' role'
 
 # The link to the browsable source code (for the left hand menu)
 oslosphinx_cgit_link = (
     "https://opendev.org/openstack/{}".format(target_name)
 )
+
+# References variable for substitutions
+current_series = openstackdocstheme.ext._get_series_name()
+deploy_guide_prefix = "https://docs.openstack.org/project-deploy-guide/openstack-ansible/{}/%s".format(current_series)
+
+# Format: Reference name: (string containing %s for substitution, linkname)
+extlinks = {'deploy_guide': (deploy_guide_prefix, '')}
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -249,8 +259,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, target_name + '.tex',
-     title, author, 'manual'),
+    (master_doc, 'doc-' + target_name + '.tex',
+     title.replace("_", "\_"), author, 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -309,3 +319,11 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 # texinfo_no_detailmenu = False
+# -- Options for PDF output --------------------------------------------------
+
+pdf_documents = [
+    (master_doc, target_name,
+     title, author)
+]
+
+locale_dirs = ['locale/']
