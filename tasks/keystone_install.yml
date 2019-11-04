@@ -44,8 +44,8 @@
   yum_repository:
     name: "shibboleth"
     description: "shibboleth Repo"
-    baseurl: "http://download.opensuse.org/repositories/security:/shibboleth/CentOS_7/"
-    gpgkey: "http://download.opensuse.org/repositories/security:/shibboleth/CentOS_7//repodata/repomd.xml.key"
+    baseurl: "{{ keystone_centos_shibboleth_mirror }}"
+    gpgkey: "{{ keystone_centos_shibboleth_key }}"
     gpgcheck: yes
   when:
     - ansible_pkg_mgr in ['yum', 'dnf']
@@ -53,7 +53,7 @@
 
 - name: Add NGINX repository keys
   rpm_key:
-    key: "{{ keystone_nginx_gpg_key }}"
+    key: "{{ keystone_centos_nginx_key }}"
     state: present
   when:
     - ansible_pkg_mgr in ['yum', 'dnf']
@@ -67,7 +67,7 @@
   yum_repository:
     name: nginx
     description: 'nginx repo'
-    baseurl: "{{ keystone_nginx_repo }}"
+    baseurl: "{{ keystone_centos_nginx_mirror }}"
   when:
     - ansible_pkg_mgr in ['yum', 'dnf']
     - keystone_web_server == 'nginx'
