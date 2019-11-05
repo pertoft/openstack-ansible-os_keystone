@@ -50,7 +50,7 @@ keystone_apache_distro_packages:
   - libapache2-mod-proxy-uwsgi
 
 keystone_nginx_distro_packages:
-  - nginx-full
+  - nginx-extras
 
 keystone_idp_distro_packages:
   - ssl-cert
