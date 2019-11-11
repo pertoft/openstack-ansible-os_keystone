@@ -43,8 +43,6 @@ keystone_apache_distro_packages:
   - mod_ssl
   - mod_proxy_uwsgi
 
-keystone_nginx_repo: http://nginx.org/packages/centos/7/$basearch/
-keystone_nginx_gpg_key: http://nginx.org/keys/nginx_signing.key
 keystone_nginx_distro_packages:
   - nginx
 
