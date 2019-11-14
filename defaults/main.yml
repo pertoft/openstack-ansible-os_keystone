@@ -40,7 +40,7 @@ keystone_shibboleth_repo: {}
 
 keystone_git_repo: https://opendev.org/openstack/keystone
 keystone_git_install_branch: master
-keystone_upper_constraints_url: "{{ requirements_git_url | default('https://opendev.org/openstack/requirements/raw/' ~ requirements_git_install_branch | default('master') ~ '/upper-constraints.txt') }}"
+keystone_upper_constraints_url: "{{ requirements_git_url | default('https://releases.openstack.org/constraints/upper/' ~ requirements_git_install_branch | default('master')) }}"
 keystone_git_constraints:
   - "git+{{ keystone_git_repo }}@{{ keystone_git_install_branch }}#egg=keystone"
   - "--constraint {{ keystone_upper_constraints_url }}"
