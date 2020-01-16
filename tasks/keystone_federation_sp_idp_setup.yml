@@ -31,20 +31,20 @@
       os_keystone_domain:
         cloud: default
         state: present
-        domain_id: "{{ item.domain }}"
-        interface: "{{ keystone_service_adminurl }}"
+        name: "{{ item.domain }}"
+        interface: admin
         verify: "{{ keystone_service_adminuri_insecure }}"
       when: item.domain is defined
       no_log: true
       with_items: "{{ keystone_federated_identities | default([]) }}"
 
     - name: Ensure project which remote IDP users are mapped onto exists
-      os_keystone_domain:
+      os_project:
         cloud: default
         state: present
         name: "{{ item.project }}"
         domain_id: "{{ item.domain }}"
-        interface: "{{ keystone_service_adminurl }}"
+        interface: admin
         verify: "{{ keystone_service_adminuri_insecure }}"
       when: item.project is defined
       no_log: true
@@ -57,8 +57,8 @@
         name: "{{ item.user }}"
         password: "{{ item.password }}"
         default_project: "{{ item.project }}"
-        domain_id: "{{ item.domain | default('Default') }}"
-        interface: "{{ keystone_service_adminurl }}"
+        domain_id: "{{ item.domain | default('default') }}"
+        interface: admin
         verify: "{{ keystone_service_adminuri_insecure }}"
       when: >
         item.user is defined and
@@ -71,9 +71,9 @@
       os_group:
         cloud: default
         state: present
-        group_name: "{{ item.group }}"
-        domain_id: "{{ item.domain | default('Default') }}"
-        interface: "{{ keystone_service_adminurl }}"
+        name: "{{ item.group }}"
+        domain_id: "{{ item.domain | default('default') }}"
+        interface: admin
         verify: "{{ keystone_service_adminuri_insecure }}"
       when: item.group is defined
       no_log: true
@@ -83,8 +83,8 @@
       os_keystone_role:
         cloud: default
         state: present
-        role_name: "{{ item.role | default('_member_') }}"
-        interface: "{{ keystone_service_adminurl }}"
+        name: "{{ item.role | default('_member_') }}"
+        interface: admin
         verify: "{{ keystone_service_adminuri_insecure }}"
       when: >
         item.group is defined and
@@ -98,8 +98,8 @@
         state: present
         group_name: "{{ item.group }}"
         project: "{{ item.project }}"
-        role_name: "{{ item.role | default('_member_') }}"
-        interface: "{{ keystone_service_adminurl }}"
+        role: "{{ item.role | default('_member_') }}"
+        interface: admin
         verify: "{{ keystone_service_adminuri_insecure }}"
       when: >
         item.group is defined and
