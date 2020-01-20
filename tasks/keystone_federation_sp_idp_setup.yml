@@ -57,7 +57,7 @@
         name: "{{ item.user }}"
         password: "{{ item.password }}"
         default_project: "{{ item.project }}"
-        domain_id: "{{ item.domain | default('default') }}"
+        domain: "{{ item.domain | default('default') }}"
         interface: admin
         verify: "{{ keystone_service_adminuri_insecure }}"
       when: >
