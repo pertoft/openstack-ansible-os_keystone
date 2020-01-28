@@ -24,6 +24,7 @@ keystone_distro_packages:
 keystone_devel_distro_packages:
   - cyrus-sasl-devel
   - libffi-devel
+  - libopenssl-devel
   - libxml2-devel
   - libxslt-devel
   - openldap2-devel
