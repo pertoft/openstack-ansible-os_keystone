@@ -466,6 +466,7 @@ keystone_pip_packages:
   - ldappool
   - osprofiler
   - PyMySQL
+  - pymemcache
   - python-memcached
   - python-openstackclient
   - systemd-python
