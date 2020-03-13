@@ -18,7 +18,7 @@
     name: "{{ item.name }}"
     file_path: "{{ item.src }}"
     state: "present"
-    server: "{{ memcached_servers }}"
+    server: "{{ keystone_memcached_servers }}"
     encrypt_string: "{{ memcached_encryption_key }}"
   with_items:
     - { src: "{{ keystone_idp.certfile }}", name: "keystone_idp_cert" }

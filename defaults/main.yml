@@ -257,6 +257,9 @@ keystone_external_ssl: false
 # External SSL forwarding proto
 keystone_secure_proxy_ssl_header: HTTP_X_FORWARDED_PROTO
 
+## Override memcached_servers
+keystone_memcached_servers: "{{ memcached_servers }}"
+
 ## Caching
 # This is a list of strings, each string contains a cache server's
 # information (IP:port for example)
