@@ -29,8 +29,7 @@
   when:
     - "inventory_hostname == ((groups['keystone_all'] | intersect(ansible_play_hosts)) | list)[-1]"
   vars:
-    ansible_python_interpreter: >-
-      {{ (keystone_service_setup_host == 'localhost') | ternary(ansible_playbook_python, ansible_python['executable']) }}
+    ansible_python_interpreter: "{{ keystone_service_setup_host_python_interpreter }}"
 
 - name: Create Keystone LDAP domain configs
   template:
