@@ -20,7 +20,7 @@ keystone_distro_packages:
   - openssh-server
   - rsync
   - cron
-  - libpython2.7
+  - libpython3-dev
 
 keystone_devel_distro_packages:
   - docutils-common
@@ -35,11 +35,10 @@ keystone_devel_distro_packages:
   - libxslt1-dev
   - libxml2-dev
   - pkg-config
-  - python-dev
+  - python3-dev
 
 keystone_service_distro_packages:
   - python3-keystone
-  - python-systemd
   - python3-systemd
   - uwsgi
   - uwsgi-plugin-python3
