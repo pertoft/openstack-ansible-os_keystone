@@ -23,7 +23,6 @@
 # serve to show the default.
 
 import openstackdocstheme
-import pbr.version
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -69,28 +68,12 @@ role_name = 'os_keystone'
 target_name = 'openstack-ansible-' + role_name
 title = 'OpenStack-Ansible Documentation: ' + role_name + ' role'
 
-# The link to the browsable source code (for the left hand menu)
-oslosphinx_cgit_link = (
-    "https://opendev.org/openstack/{}".format(target_name)
-)
-
 # References variable for substitutions
 current_series = openstackdocstheme.ext._get_series_name()
 deploy_guide_prefix = "https://docs.openstack.org/project-deploy-guide/openstack-ansible/{}/%s".format(current_series)
 
 # Format: Reference name: (string containing %s for substitution, linkname)
 extlinks = {'deploy_guide': (deploy_guide_prefix, '')}
-
-# The version info for the project you're documenting, acts as replacement for
-# |version| and |release|, also used in various other places throughout the
-# built documents.
-#
-# The short X.Y version.
-version_info = pbr.version.VersionInfo(target_name)
-# The full version, including alpha/beta/rc tags.
-release = version_info.version_string_with_vcs()
-# The short X.Y version.
-version = version_info.canonical_version_string()
 
 # openstackdocstheme options
 repository_name = 'openstack/' + target_name
@@ -180,10 +163,6 @@ html_static_path = ['_static']
 # .htaccess) here, relative to this directory. These files are copied
 # directly to the root of the documentation.
 # html_extra_path = []
-
-# If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
-# using the given strftime format.
-html_last_updated_fmt = '%Y-%m-%d %H:%M'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
