@@ -484,12 +484,6 @@ keystone_user_pip_packages: []
 keystone_optional_oslomsg_amqp1_pip_packages:
   - oslo.messaging[amqp1]
 
-# This variable is used by the repo_build process to determine
-# which host group to check for members of before building the
-# pip packages required by this role. The value is picked up
-# by the py_pkgs lookup.
-keystone_role_project_group: keystone_all
-
 # NOTE(cloudnull): Tunable SSO callback file file-based overrides If defined,
 #                  it'll be read from the deployment host, interpreted by the
 #                  template engine and copied to the target host.
