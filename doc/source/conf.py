@@ -76,9 +76,10 @@ deploy_guide_prefix = "https://docs.openstack.org/project-deploy-guide/openstack
 extlinks = {'deploy_guide': (deploy_guide_prefix, '')}
 
 # openstackdocstheme options
-repository_name = 'openstack/' + target_name
-bug_project = project.lower()
-bug_tag = ''
+openstackdocs_repo_name = 'openstack/' + target_name
+openstackdocs_pdf_link = True
+openstackdocs_bug_project = project.lower()
+openstackdocs_bug_tag = ''
 
 # for a list of supported languages.
 #
