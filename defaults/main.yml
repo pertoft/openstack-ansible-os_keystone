@@ -98,7 +98,8 @@ keystone_resource_driver: sql
 keystone_bind_address: "{{ openstack_service_bind_address | default('0.0.0.0') }}"
 
 ## Database info
-keystone_db_setup_host: "{{ ('galera_all' in groups) | ternary(groups['galera_all'][0], 'localhost') }}"
+keystone_db_setup_host: "{{ openstack_db_setup_host | default('localhost') }}"
+keystone_db_setup_python_interpreter: "{{ openstack_db_setup_python_interpreter | default((keystone_db_setup_host == 'localhost') | ternary(ansible_playbook_python, ansible_python['executable'])) }}"
 keystone_galera_address: "{{ galera_address | default('127.0.0.1') }}"
 keystone_galera_user: keystone
 keystone_galera_database: keystone
