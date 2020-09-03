@@ -22,4 +22,4 @@
 - name: Register a fact for the keystone pub key
   set_fact:
      keystone_pubkey: "{{ ansible_play_batch | map('extract', hostvars, 'keystone_pub') | map(attribute='content') | map('b64decode') | join('\n') | b64encode }}"
-  when: inventory_hostname == ansible_play_batch[0]
+  when: _keystone_is_first_play_host

@@ -14,13 +14,13 @@
 # limitations under the License.
 
 - include_tasks: keystone_idp_self_signed_create.yml
-  when: inventory_hostname == groups['keystone_all'][0]
+  when: _keystone_is_first_play_host
 
 - include_tasks: keystone_idp_self_signed_store.yml
-  when: inventory_hostname == groups['keystone_all'][0]
+  when: _keystone_is_first_play_host
 
 - include_tasks: keystone_idp_self_signed_distribute.yml
-  when: inventory_hostname != groups['keystone_all'][0]
+  when: not _keystone_is_first_play_host
 
 - include_tasks: keystone_idp_metadata.yml
 

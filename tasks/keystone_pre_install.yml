@@ -20,7 +20,7 @@
     system: "yes"
   delegate_to: "{{ item }}"
   with_items: "{{ ansible_play_hosts }}"
-  when: "inventory_hostname == ansible_play_hosts[0]"
+  when: _keystone_is_first_play_host
 
 - name: create additional groups
   group:
@@ -31,7 +31,7 @@
   with_nested:
     - "{{ ansible_play_hosts }}"
     - "{{ keystone_system_additional_groups }}"
-  when: "inventory_hostname == ansible_play_hosts[0]"
+  when: _keystone_is_first_play_host
 
 - name: Remove old key file(s) if found
   file:
@@ -44,7 +44,7 @@
       - "{{ keystone_system_user_home }}/.ssh/id_rsa.pub"
   when:
     - keystone_recreate_keys | bool
-    - "inventory_hostname == ansible_play_hosts[0]"
+    - _keystone_is_first_play_host
   delegate_to: "{{ item[0] }}"
 
 - name: Create the keystone system user
@@ -59,7 +59,7 @@
     home: "{{ keystone_system_user_home }}"
   delegate_to: "{{ item }}"
   with_items: "{{ ansible_play_hosts }}"
-  when: "inventory_hostname == ansible_play_hosts[0]"
+  when: _keystone_is_first_play_host
 
 # NOTE(jrosser) this block is to undo symlinking of /etc/keystone into
 # the keystone venv introduced in change-id I93cb6463ca1eb93ab7f4e7a3970a7de829efaf66.
@@ -129,7 +129,7 @@
         owner: root
         group: root
   delegate_to: "{{ item[0] }}"
-  when: "inventory_hostname == ansible_play_hosts[0]"
+  when: _keystone_is_first_play_host
 
 # NOTE (jrosser) This recovers Stein release candidate deployments into a
 # state where the fernet and credential keys will not be lost on subsequent upgrades.

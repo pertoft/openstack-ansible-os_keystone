@@ -32,7 +32,7 @@
     dest: "{{ item.dest }}"
     mode: "{{ item.mode|default('0640') }}"
   when:
-    - inventory_hostname == groups['keystone_all'][0]
+    - _keystone_is_first_play_host
     - item.content != ''
   with_items:
     - { content: "{{ shibboleth_cert_user_content }}", dest: "/etc/shibboleth/sp-cert.pem" }
@@ -46,7 +46,7 @@
   command: "shib-keygen -h {{ external_lb_vip_address }} -y {{ keystone_sp.cert_duration_years }}"
   args:
     creates: "/etc/shibboleth/sp-cert.pem"
-  when: inventory_hostname == groups['keystone_all'][0]
+  when: _keystone_is_first_play_host
   notify:
     - Manage LB
     - Restart web server
@@ -57,20 +57,20 @@
     src: "/etc/shibboleth/sp-cert.pem"
   register: _keystone_sp_cert
   changed_when: false
-  when: inventory_hostname == groups['keystone_all'][0]
+  when: _keystone_is_first_play_host
 
 - name: Store sp key
   slurp:
     src: "/etc/shibboleth/sp-key.pem"
   register: _keystone_sp_key
   changed_when: false
-  when: inventory_hostname == groups['keystone_all'][0]
+  when: _keystone_is_first_play_host
 
 - name: Register a fact for the cert and key
   set_fact:
      keystone_sp_cert_fact: "{{ _keystone_sp_cert.content }}"
      keystone_sp_key_fact: "{{ _keystone_sp_key.content }}"
-  when: inventory_hostname == groups['keystone_all'][0]
+  when: _keystone_is_first_play_host
 
 - name: Distribute sp key
   copy:
@@ -79,7 +79,7 @@
     owner: "{{ keystone_system_user_name }}"
     group: "{{ keystone_system_group_name }}"
     mode: "0640"
-  when: inventory_hostname != groups['keystone_all'][0]
+  when: not _keystone_is_first_play_host
   notify:
     - Manage LB
     - Restart web server
@@ -92,7 +92,7 @@
     owner: "{{ keystone_system_user_name }}"
     group: "{{ keystone_system_group_name }}"
     mode: "0640"
-  when: inventory_hostname != groups['keystone_all'][0]
+  when: not _keystone_is_first_play_host
   notify:
     - Manage LB
     - Restart web server
@@ -106,7 +106,7 @@
   with_items:
     - "/etc/shibboleth/sp-cert.pem"
     - "/etc/shibboleth/sp-key.pem"
-  when: inventory_hostname != groups['keystone_all'][0]
+  when: not _keystone_is_first_play_host
   notify:
     - Manage LB
     - Restart web server

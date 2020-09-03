@@ -65,8 +65,7 @@
 
 - import_tasks: db_setup.yml
   when:
-    - "keystone_services['keystone-wsgi-public']['group'] in group_names"
-    - "inventory_hostname == ((groups[keystone_services['keystone-wsgi-public']['group']] | intersect(ansible_play_hosts)) | list)[0]"
+    - "_keystone_is_first_play_host"
   vars:
     _oslodb_setup_host: "{{ keystone_db_setup_host }}"
     _oslodb_ansible_python_interpreter: "{{ keystone_db_setup_python_interpreter }}"
@@ -83,8 +82,7 @@
 
 - import_tasks: mq_setup.yml
   when:
-    - "keystone_services['keystone-wsgi-public']['group'] in group_names"
-    - "inventory_hostname == ((groups[keystone_services['keystone-wsgi-public']['group']] | intersect(ansible_play_hosts)) | list)[0]"
+    - "_keystone_is_first_play_host"
   vars:
     _oslomsg_rpc_setup_host: "{{ keystone_oslomsg_rpc_setup_host }}"
     _oslomsg_rpc_userid: "{{ keystone_oslomsg_rpc_userid }}"
@@ -164,7 +162,7 @@
 
 - import_tasks: keystone_service_bootstrap.yml
   when:
-    - "inventory_hostname == ((groups['keystone_all'] | intersect(ansible_play_hosts)) | list)[0]"
+    - "_keystone_is_first_play_host"
     - "keystone_service_setup | bool"
   tags:
     - keystone-config
@@ -186,7 +184,8 @@
     - url: "{{ keystone_service_internaluri }}"
       validate_certs: "{{ not keystone_service_internaluri_insecure }}"
   register: _wait_check
-  when: "inventory_hostname == ((groups['keystone_all'] | intersect(ansible_play_hosts)) | list)[-1]"
+  when:
+    - "_keystone_is_last_play_host"
   until: _wait_check is success
   retries: 12
   delay: 5
@@ -216,7 +215,7 @@
         url: "{{ keystone_service_adminuri }}"
         service: "{{ keystone_service_name }}"
   when:
-    - "inventory_hostname == ((groups['keystone_all'] | intersect(ansible_play_hosts)) | list)[-1]"
+    - "_keystone_is_last_play_host"
     - "keystone_service_setup | bool"
   tags:
     - keystone-config

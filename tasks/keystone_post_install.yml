@@ -25,7 +25,7 @@
     daemon_reload: yes
   delegate_to: "{{ item }}"
   with_items: "{{ ansible_play_hosts }}"
-  when: "inventory_hostname == ansible_play_hosts[0]"
+  when: _keystone_is_first_play_host
 
 - name: Generate the keystone system user ssh key
   user:
@@ -33,7 +33,7 @@
     generate_ssh_key: "yes"
   delegate_to: "{{ item }}"
   with_items: "{{ ansible_play_hosts }}"
-  when: "inventory_hostname == ansible_play_hosts[0]"
+  when: _keystone_is_first_play_host
 
 - name: Copy keystone configuration files
   config_template:

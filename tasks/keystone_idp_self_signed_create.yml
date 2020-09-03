@@ -30,8 +30,7 @@
     -out {{ keystone_idp.certfile }}
     -extensions v3_ca
     creates={{ keystone_idp.certfile }}
-  when: >
-    inventory_hostname == groups['keystone_all'][0]
+  when: _keystone_is_first_play_host
   notify:
     - Manage LB
     - Restart web server
