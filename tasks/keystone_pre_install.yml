@@ -130,21 +130,3 @@
         group: root
   delegate_to: "{{ item[0] }}"
   when: _keystone_is_first_play_host
-
-# NOTE (jrosser) This recovers Stein release candidate deployments into a
-# state where the fernet and credential keys will not be lost on subsequent upgrades.
-# Remove in Train release
-- name: Rescue fernet keys previously symlinked into the ansible venv
-  command: >
-    cp -rp {{ item.stat.lnk_target | regex_replace('^../', '/') }} /etc/keystone
-  with_items:
-    - "{{ keystone_conf_dir_stat.results }}"
-  delegate_to: "{{ item.item }}"
-  when:
-    - keystone_install_method == 'source'
-    - item.stat.islnk is defined and
-      item.stat.islnk
-  run_once: yes
-  tags:
-    - skip_ansible_lint
-
