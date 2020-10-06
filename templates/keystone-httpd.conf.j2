@@ -54,7 +54,6 @@ Listen {{ keystone_service_port }}
         Require valid-user
     </LocationMatch>
 
-    WSGIScriptAliasMatch ^(/v3/OS-FEDERATION/identity_providers/.*?/protocols/.*?/auth)$ /var/www/cgi-bin/keystone/main/$1
     {% endif %}
 
     <Directory /var/www/cgi-bin/keystone>
@@ -64,6 +63,9 @@ Listen {{ keystone_service_port }}
         allow from all
     </Directory>
 
+ {% if keystone_sp != {} -%}
+    ProxyPass /Shibboleth.sso !
+ {% endif %}
     ProxyPass / uwsgi://127.0.0.1:{{ keystone_uwsgi_ports['keystone-wsgi-public']['socket'] }}/
 
 </VirtualHost>
